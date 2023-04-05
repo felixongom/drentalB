@@ -93,7 +93,8 @@ router.post("/", validateToken, async (req, res) => {
   
         try {
           const pay = await payment.save()
-          res.send(pay).status(200)
+          // res.send(pay).status(200)
+          console.log(pay);
           
         } catch (error) {
           console.log(error);
@@ -115,7 +116,7 @@ router.put("/:id", validateToken, async (req, res) => {
   if (user.usertype !== "admin") return res.send("you must be admin to post");
   //  check for dupicate
   if (!name || !description || !phone) {
-    return res.send({ messege: "please fill out all the field" });
+    return res.send("please fill out all the field" );
   }
 
   //making sure only admi post
@@ -172,7 +173,7 @@ router.put("/:id", validateToken, async (req, res) => {
 
     res.send('updated')
   } catch (error) {
-    res.send(error.messege);
+    // res.send(error.messege);
     console.log(error.messege);
   }
 });
@@ -234,7 +235,7 @@ router.get("/everything", validateToken, async (req, res) => {
       data.push(single_house);
 
       // filtering to get amount
-      const cash = pay.find(el=>el.houseId==house._id)
+      const cash = pay.find(el=>el.houseId==house._id) 
       
       // calculate time let and appent to cash
       single_house.pay = cash
