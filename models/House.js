@@ -1,21 +1,22 @@
-const { boolean, string, date } = require('joi')
 const mongoose = require('mongoose')
 
 const HouseSchema = new mongoose.Schema({
-    user_id:{type : String, require:true},
+    user_id:{ type: mongoose.SchemaTypes.ObjectId,required: true, index: true } ,
     name:{type : String,require:true},
     approve:Boolean,
     active:Boolean,
+    deleted:false,
+    type:String,
     images:[String],
     description:String,
     phone:[String],
-    prices:[
-        { price:String}, 
-        {duration:String}
-    ],
+
+    prices:[{}],
     services:[],
+    veiws:Number,
+    likes:Number,
     
-    adress:{
+    address:{
         region:String,
         district:String,
         town:String,

@@ -1,11 +1,9 @@
 const express = require("express");
-const uuid = require("uuid").v4;
 
 const { validateToken } = require("./validateUser");
 const House = require("../models/House");
-const User = require("../models/User");
-const { route } = require("./auth");
 const router = express.Router();
+const {servicesFunc} = require('./__functions')
 
 
 // to add abject of services int o services array
@@ -14,14 +12,7 @@ router.post("/:id", async (req, res) => {
   const { id } = req.params;
 
   // convert the csv to object of services to add id and time
-  let servisArray = services.split(",");
-
-  let _services = [];
-  for (let service of servisArray) {
-    let serviceobj = { id: uuid(), service, date: Date.now() };
-
-    _services = [..._services, serviceobj];
-  }
+ const _services = servicesFunc(services)
 
   //   get and update
   try {

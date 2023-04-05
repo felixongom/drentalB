@@ -1,6 +1,7 @@
 const { sign, verify } = require("jsonwebtoken");
 const uuid = require('uuid').v4
 const path = require("path");
+const BASE_URL = require('./__config')
 
 // validatinon of user befour registering
 const validateUser = (user) => {
@@ -10,28 +11,28 @@ const validateUser = (user) => {
     error.push("email must be more than six charactors long");
   }
 
-  if (user.email.indexOf("@") < 0) {
+  if (user.email.indexOf("@")<0) {
     error.push("email must be valid");
   }
 
   if (user.name.length < 4) {
     error.push("name must be more than three characters long");
   }
-
+ 
   if (user.phone.length < 10) {
     error.push("phone must be more than 9 characters long");
   }
-
+ 
   if (user.password.length < 4) {
     error.push("password must more than thr charactors long");
   }
-  if (user.usertype !=='admin' || user.usertype !=='super admin') {
-    error.push(`${user.usertype} is an invalid usertype`);
-  }
+ 
 
   if(error.length>0) return error;
+  return []
   
 };
+
 // ...............................................................................................................................................................................................
 
 // validatinon of user befour registering
@@ -142,8 +143,9 @@ const timeAgo = (date)=>{
       const  year =Math.floor( dateInMillisecind/ (1000*60*60*24*30))
       return `${year<2? '1 year':year.toString() + ' yrs'} ago`;
   }
-
-
+  
 }
+
+ 
 
 module.exports = { validateUser, validateUserUpdate, validateToken, upload_files, timeAgo };

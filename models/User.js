@@ -27,20 +27,7 @@ const userSchema = new mongoose.Schema({
     active:String,
     avater:String,
     usertype:String
-    // skills:{
-    //     type:[
-    //         { 
-    //         id:Number,
-    //         name:String,
-    //         decription:String,
-    //         date:{
-    //             type:Date,
-    //             default:Date.now()
-    //         }
-    //     }
-    // ]
-    // },
     
-}, {timestamps:true})
+}, {timestamps:true}) 
 
 module.exports = mongoose.model("User", userSchema)
