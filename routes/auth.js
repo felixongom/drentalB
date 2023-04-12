@@ -64,7 +64,9 @@ router.post("/login", async (req, res) => {
     if (!vallidPassword)
       return res.send({ messege: "incorrect email or password" });
 
-    const tokken = sign({ id: user._id, usertype }, process.env.JWT_SECREATE);
+
+    const JWT_SECREATE ='this is the tolkken for the JWT of this application--'
+    const tokken = sign({ id: user._id, usertype }, JWT_SECREATE);
     res
       .header("tokken", tokken, { maxAge: 60 * 60 * 30 * 1000 }) //vallid for 30 days
       .send( tokken );

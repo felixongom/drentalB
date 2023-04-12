@@ -178,12 +178,12 @@ router.put("/:id", validateToken, async (req, res) => {
   }
 });
 
-// fine all active and approved  the house
+// fine all active, not deleted and approved  the houses
 router.get("/", async (req, res) => {
   try {
     const pay = await Payment.find({active:true}).sort({createdAt:-1}) //get active payment
     const price = await Price.find().sort({createdAt:-1})[0]
-    let rating = price?price[0]?.price:1000
+    let priceRating = price?price[0]?.price:1000
     const houses = await House.find({
       deleted: false,
       active: true,
@@ -195,13 +195,14 @@ router.get("/", async (req, res) => {
       const single_house = houseSerilise(house);
       data.push(single_house);
 
-      // filtering to get amount
-      const cash = pay.find(el=>el.houseId==house._id)
-      
-      // calculate time let and appent to cash
-      single_house.pay = cash
-      single_house.timeleft = timeLeft(cash,rating)
-      single_house.amountpayed = cash?cash.amount:0
+            // filtering to get amount
+            const allPayments = pay.filter(el=>el.houseId==house._id) 
+            const amountPayed = allPayments[0]?.amount
+            
+            // calculate time let and append to allPayments
+            single_house.pay = allPayments?allPayments[0]?.amount:0
+            single_house.amountpayed = allPayments?allPayments?.amount:10
+            single_house.timeleft = timeLeft(amountPayed, priceRating)
 
     }
 
@@ -225,7 +226,8 @@ router.get("/everything", validateToken, async (req, res) => {
     const price = await Price.find().sort({createdAt:-1})
     const houses = await House.find().sort({ approve:1})
     const pay = await Payment.find({active:true}).sort({createdAt:-1})
-    let rating = price?price[0]?.price:1000
+    let priceRating = price?price[0]?.price:1000 //amount per month
+    // console.log(pay); //amount per month
     
 
     const data = [];
@@ -235,12 +237,13 @@ router.get("/everything", validateToken, async (req, res) => {
       data.push(single_house);
 
       // filtering to get amount
-      const cash = pay.find(el=>el.houseId==house._id) 
+      const allPayments = pay.filter(el=>el.houseId==house._id) 
+      const amountPayed = allPayments[0]?.amount
       
-      // calculate time let and appent to cash
-      single_house.pay = cash
-      single_house.timeleft = timeLeft(cash, rating)
-      single_house.amountpayed = cash?cash.amount:0
+      // calculate time let and append to allPayments
+      single_house.pay = allPayments?allPayments[0]?.amount:0
+      single_house.amountpayed = allPayments?allPayments?.amount:10
+      single_house.timeleft = timeLeft(amountPayed, priceRating)
 
     }
     // go ahead and update house to inactive
@@ -263,20 +266,21 @@ router.get("/:id",  async (req, res) => {
     const pay = await Payment.find()
     const house = await House.findById(req.params.id);
     const price = await Price.find().sort({createdAt:-1})[0]
-    let rating = price?price[0]?.price:1000
+    let priceRating = price?price[0]?.price:1000
 
     if(!house){
       return res.send('no such house')
       
     } else{
       const single_house = house ? houseSerilise(house) : "404 not found";
-      // filtering to get amount
-      const cash = pay.find(el=>el.houseId==house._id)
-      
-      // calculate time let and appent to cash
-      single_house.pay = cash
-      single_house.timeleft = timeLeft(cash, rating)
-      single_house.amountpayed = cash?cash.amount:0
+           // filtering to get amount
+           const allPayments = pay.filter(el=>el.houseId==house._id) 
+           const amountPayed = allPayments[0]?.amount
+           
+           // calculate time let and append to allPayments
+           single_house.pay = allPayments?allPayments[0]?.amount:0
+           single_house.amountpayed = allPayments?allPayments?.amount:1000
+           single_house.timeleft = timeLeft(amountPayed, priceRating)
       res.send(single_house);
     }
   } catch (error) {
@@ -292,20 +296,22 @@ router.post("/me", validateToken, async (req, res) => {
     const pay = await Payment.find()
     const houses = await House.find({ user_id: user.id, deleted: false });
     const price = await Price.find().sort({createdAt:-1})[0]
-    let rating = price?price[0]?.price:1000
+    let priceRating = price?price[0]?.price:1000 //amount 
+
 
     const data = [];
     // cheching through the house
     for (let house of houses) {
       const single_house = houseSerilise(house);
       
-      // filtering to get amount
-      const cash = pay.find(el=>el.houseId==house._id)
-      
-      // calculate time let and appent to cash
-      single_house.pay = cash
-      single_house.timeleft = timeLeft(cash,rating)
-      single_house.amountpayed = cash?cash.amount:0
+           // filtering to get amount
+           const allPayments = pay.filter(el=>el.houseId==house._id) 
+           const amountPayed = allPayments[0]?.amount
+           
+           // calculate time let and append to allPayments
+           single_house.pay = allPayments?allPayments[0]?.amount:0
+           single_house.amountpayed = allPayments?allPayments?.amount:50
+           single_house.timeleft = timeLeft(amountPayed, priceRating)
       
       data.push(single_house)
     }

@@ -16,8 +16,11 @@ const app = express()
 require('dotenv').config()
 
 // connection
-const DB_CONNECT ='mongodb+srv://felixz:317111@cluster0.ujknwfv.mongodb.net/?retryWrites=true&w=majority'
-mongoose.connect(DB_CONNECT, (err, res)=>{
+const DB_NETWORK ='mongodb+srv://felixz:317111@cluster0.ujknwfv.mongodb.net/?retryWrites=true&w=majority'
+const DB_LOCAL = process.env.DB
+const DB_CONNECT = DB_LOCAL
+
+mongoose.connect(DB_NETWORK, (err, res)=>{
     if(err){console.log(err)}
 
     // console.log('connected');

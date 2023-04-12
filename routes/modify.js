@@ -17,8 +17,10 @@ router.patch('/:id/:approved',validateToken, async (req, res)=>{
     const {id, approved} = req.params
     const {usertype} = req.user
     const status = approved===true?false: true
+    console.log(status);
+    console.log(req.params);
 
-   if(usertype !=='super admin') return res.send('unaouthorised sction')
+   if(usertype !=='super admin') return res.send('unaouthorised action')
  try {
      const update = await House.findOneAndUpdate({_id:id},{$set:{approve:status}} )
      res.send('approved')
@@ -66,10 +68,21 @@ router.patch('/:id/:approved',validateToken, async (req, res)=>{
   })
 
 
-  router.delete('/image', async (req, res)=>{
-    // const {id} = req.body
-    console.log(req.body);
-    res.send(req.body)
+  // deleting images of the house
+  router.delete('/image/:Hid/:name', async (req, res)=>{
+    const {Hid, name} = req.params
+    console.log(req.params);
+
+    // delete the image from the database
+    try {
+      const deleteImage = await House.findOneAndUpdate({_id:Hid}, {$pull:{images:name}})
+      if(deleteImage){
+        deleteImages([name])
+      }
+      res.send('deleted') 
+    } catch (error) {
+console.log(error);      
+    }
   })
 
 

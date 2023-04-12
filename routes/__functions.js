@@ -28,7 +28,7 @@ const houseSerilise = (house) => {
   single_house.phone = house.phone;
   single_house.prices = house.prices;
   single_house.createdAt = house.createdAt;
-  single_house.views = house.views;
+  single_house.views = house.veiws;
   single_house.likes = house.likes;
   single_house.deleted = house.deleted;
   single_house.added = timeAgo(house.createdAt);
@@ -128,15 +128,16 @@ const priceFunction = (data) => {
   return prices;
 };
 // taking payment and appenting to the data
-const timeLeft = (amount, rating) => {
-  // console.log(rating);
-  if (amount) {
-    const amt = amount.amount;
+const timeLeft = (amountPayed, pricePerMonth) => {
+  //  return console.log(235);
+  if (amountPayed) {
+    const amt = amountPayed;
   
     let cash = amt - amt * 0.02; //taking two % from the amount
     // getting the amount per second
-    const amounPerSce = (30 / rating) * 24 * 60 * 60;
+    const amounPerSce = (30 / pricePerMonth) * 24 * 60 * 60;
     const seconds = amounPerSce * cash;
+    // console.log(amounPerSce);
 
     // return amt;
 
