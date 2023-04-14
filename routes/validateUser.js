@@ -106,7 +106,7 @@ const upload_files = async (file) => {
 
 // time ago fuctionality
 const timeAgo = (date)=>{
-  const dateInMillisecind = Date.now() - new Date( date);
+  const dateInMillisecind = Date.now() - new Date(date);
 
   // time ago n seconds
   if( dateInMillisecind/ (1000)<60){

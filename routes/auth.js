@@ -18,8 +18,8 @@ router.post("/register", async (req, res) => {
   // validating the fields
   // console.log(req.body);
   let error = validateUser(req.body)
-  if(error.length>0)return res.send(error)
-
+  if(error.length>0)return res.send(error).status(400)
+ 
   const { name, email, phone, password, usertype } = req.body;
 
   // check for duplicate db registry
@@ -27,7 +27,7 @@ router.post("/register", async (req, res) => {
   if (check) return res.status(400).send({ error: "user already exist" });
  
   // go on save user
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt(10); 
   const hashpassword = await bcrypt.hash(password, salt);
   const user = new User({
     name,
@@ -65,7 +65,7 @@ router.post("/login", async (req, res) => {
       return res.send({ messege: "incorrect email or password" });
 
 
-    const JWT_SECREATE ='this is the tolkken for the JWT of this application--'
+    const JWT_SECREATE ='this is the tolkken for the JWT of this application'
     const tokken = sign({ id: user._id, usertype }, JWT_SECREATE);
     res
       .header("tokken", tokken, { maxAge: 60 * 60 * 30 * 1000 }) //vallid for 30 days
@@ -90,7 +90,7 @@ router.get("/me", validateToken, async (req, res) => {
     console.log(error);
   }
 });
-
+  
 // ............................................................................................................................................................................
 
 // get one user
@@ -179,7 +179,7 @@ router.patch("/", validateToken, async (req, res) => {
 });
 // upate auser
 router.patch("/admin/:id", validateToken, async (req, res) => {
- 
+    const {id} = req.params
     const { name, email, phone} = req.body;
     try {
       // validating the fields
@@ -189,7 +189,7 @@ router.patch("/admin/:id", validateToken, async (req, res) => {
     let doc = await User.findOneAndUpdate({_id:id}, {name, email, phone}, {new:true});
     doc = {
       name: doc.name,
-      email: doc.email,
+      email: doc.email, 
       phone: doc.phone,
       
     }
@@ -240,10 +240,13 @@ router.post('/avater', validateToken, async (req,res)=>{
     // saving it to db
     const _avater = await User.updateOne({_id:id}, {$set:{avater}})
 
-    console.log(_avater);
+    console.log(_avater, _avater);
     res.send('sent').status(200);
 
+  }else{
+    res.send('no file')
   }
+
     
 })
 
