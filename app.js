@@ -20,7 +20,7 @@ require('dotenv').config()
 const DB_NETWORK ='mongodb+srv://felixz:317111@cluster0.ujknwfv.mongodb.net/?retryWrites=true&w=majority'
 const DB_LOCAL = process.env.DB
 
-mongoose.connect(DB_NETWORK, (err, res)=>{
+mongoose.connect(DB_LOCAL, (err, res)=>{
     if(err){console.log(err)}
 
     console.log('connected');
@@ -30,7 +30,7 @@ mongoose.connect(DB_NETWORK, (err, res)=>{
 app.use(express.static('public'))
 app.use('/uploads', express.static('uploads')) 
 
-// middlewares
+// middlewares 
 app.use(express.json()) 
 app.use(cookiePaser())
 app.use(fileUpload())

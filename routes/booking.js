@@ -4,25 +4,27 @@ const Booking = require("../models/Booking");
 const House = require("../models/House");
 const {
   houseSerilise,
-  priceFunction,
-  addressFunction,
+  houseobj
 } = require("./__functions");
 const { findByIdAndUpdate } = require("../models/House");
 const User = require("../models/User");
 
 const router = express.Router();
 
-// approving the house
+// booking the house
 router.post("/", validateToken, async (req, res) => {
-  const { houseId, bookeePhone, price } = req.body;
+  const { houseId, bookeePhone, price, houseOwner} = req.body;
   const { id, usertype } = req.user;
 
+
   if (usertype !== "client") return res.send({ error: "unauthorize account" });
+  if (!houseId || !bookeePhone || !price || !houseOwner) return res.send({ error: "supply all the fields" });
 
   const booking = new Booking({
     bookeeId: id,
     bookeePhone: bookeePhone,
     houseId,
+    houseOwner,
     price: price.price1,
     duration: price.per1,
     active: true,
@@ -31,48 +33,60 @@ router.post("/", validateToken, async (req, res) => {
   res.send(__booking);
 });
 
-// finging allthe booking from the db
+// finging all the booking from the db
 router.get("/", validateToken, async (req, res) => {
-  const bookings = await Booking.find();
+  let bookings = []
   const houses = await House.find();
   const customer = await User.find();
+  const {usertype, id}=req.user;
+
+  if(usertype==='admin'){
+    bookings = await Booking.find({houseOwner:id}).sort({ createdAt: -1 });
+  }else if(usertype==='super admin'){
+    bookings = await Booking.find().sort({ createdAt: -1 });
+
+  }
 
   const result = [];
   for (let booking of bookings) {
     for(let custom of customer){
       if(booking.bookeeId==custom._id){
-        const newHouses = houses.filter((house) => house._id == booking.houseId)[0];
+        let newHouses = houses.find((house) => house._id == booking.houseId);
     
         // return house
         let person ={name:custom.name, avater:custom.avater, phone:custom.phone, email:custom.email}
-        const returnHouse = { booking, houses: newHouses, customer:person };
+        const returnHouse = { booking, customer:person, houses:newHouses===undefined?houseobj:houseSerilise(newHouses)};
         result.push(returnHouse);
       }
     }
   }
   res.send(result);
 });
-// finging all my booking from the db
+// finging all my  booking from the db that belongs to one person
 router.get("/me", validateToken, async (req, res) => {
   const { usertype, id } = req.user;
 
-  const bookings = await Booking.find({ bookeeId: req.user.id })
-    .limit(5)
-    .sort({ createdAt: -1 });
+  let bookings
   let houses;
 
-  if (usertype === "admin") {
-    houses = await House.find({ user_id: id }).sort({ createdAt: -1 }); //getting for aspacifict person
-  } else {
-    houses = await House.find().sort({ createdAt: -1 }); //geting all
+  if (usertype === "client") {
+    bookings = await Booking.find({ bookeeId: id })
+    .limit(5)
+    .sort({ createdAt: -1 });
+    
+    houses = await House.find().sort({ createdAt: -1 });
   }
-
+  
   const result = [];
+
   for (let booking of bookings) {
-    const newHouses = houses.filter((house) => house._id == booking.houseId)[0];
+    let newHouses = houses.find((house) => house._id == booking.houseId);
+   //getting for aspacifict person
+    
 
     // return house
-    const returnHouse = { booking, houses: houseSerilise(newHouses) };
+    const returnHouse = { booking, houses:newHouses===undefined?houseobj:houseSerilise(newHouses) };
+    // console.log(newHouses);
     result.push(returnHouse);
   }
   res.send(result);

@@ -11,7 +11,27 @@ const getImagesUrl = (img) => {
   return newurl;
 };
 
-//
+//house object
+const houseobj ={
+  _id:'',
+  name : '' ,
+  user_id : '',
+  approve : '',
+  active : '',
+  type:'' ,
+  images : "",
+  services : '',
+  description : '',
+  address :'',
+  phone : '',
+  prices : '',
+  createdAt :'',
+  views : '',
+  likes : '',
+  deleted : '',
+  added : ''
+
+}
 // serialise houser
 const houseSerilise = (house) => {
   const single_house = {};
@@ -178,4 +198,5 @@ module.exports = {
   addressFunction,
   priceFunction,
   timeLeft,
+  houseobj
 };

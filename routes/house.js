@@ -209,11 +209,12 @@ router.get("/", async (req, res) => {
     // go ahead and update house to inactive
     for (let d of data ){
       if(d.amountpayed===0){
-        await House.findOneAndUpdate({_id:d._id}, {$set:{active:false}})
-       await Payment.findOneAndUpdate({houseId:d._id}, {$set:{active:false}})
+        await House.findOneAndUpdate({_id:d.id}, {$set:{active:false}})
+       await Payment.findOneAndUpdate({houseId:d.id}, {$set:{active:false}})
       }
 
     }
+    
     return res.send(data);
   } catch (error) {
     console.log(error);
@@ -248,10 +249,10 @@ router.get("/everything", validateToken, async (req, res) => {
     }
     // go ahead and update house to inactive
     for (let d of data ){
-      
-      if(d.amountpayed===0){
-        await House.findOneAndUpdate({_id:d._id}, {$set:{active:false}})
-        await Payment.findOneAndUpdate({houseId:d._id}, {$set:{active:false}})
+
+      if(d.timeleft==='0 sec'){
+        await House.findOneAndUpdate({_id:d.id}, {$set:{active:false}})
+        await Payment.findOneAndUpdate({houseId:d.id}, {$set:{active:false}})
       }
     }
     return res.send(data);
@@ -319,8 +320,8 @@ router.post("/me", validateToken, async (req, res) => {
 
     for (let d of data ){
       if(d.amountpaye<1){
-        await House.findOneAndUpdate({_id:d._id}, {$set:{active:false}})
-        await Payment.findOneAndUpdate({houseId:d._id}, {$set:{active:false}})
+        await House.findOneAndUpdate({_id:d.id}, {$set:{active:false}})
+        await Payment.findOneAndUpdate({houseId:d.id}, {$set:{active:false}})
       }
     }
     
