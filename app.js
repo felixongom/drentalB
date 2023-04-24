@@ -23,7 +23,7 @@ const DB_LOCAL = process.env.DB
 mongoose.connect(DB_NETWORK, (err, res)=>{
     if(err){console.log(err)}
 
-    console.log('connected');
+    // console.log('connected');
 })
 
 //set static folder
