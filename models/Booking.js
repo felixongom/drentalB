@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const Booking = new mongoose.Schema({
     bookeeId: String,
-    bookeePhone:String,
+    houseOwner:String,
     bookeePhone:String,
     houseId:String,
     price:{type : Number,require:true},

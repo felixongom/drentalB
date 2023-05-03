@@ -13,6 +13,7 @@ const router = express.Router();
 
 // booking the house
 router.post("/", validateToken, async (req, res) => {
+// return console.log(req.body)
   const { houseId, bookeePhone, price, houseOwner} = req.body;
   const { id, usertype } = req.user;
 
@@ -25,7 +26,7 @@ router.post("/", validateToken, async (req, res) => {
     bookeePhone: bookeePhone,
     houseId,
     houseOwner,
-    price: price.price1,
+    price: price.price1, 
     duration: price.per1,
     active: true,
   });
@@ -35,10 +36,11 @@ router.post("/", validateToken, async (req, res) => {
 
 // finging all the booking from the db
 router.get("/", validateToken, async (req, res) => {
+  // return console.log(req.user)
   let bookings = []
+  const {usertype, id}=req.user; 
   const houses = await House.find();
   const customer = await User.find();
-  const {usertype, id}=req.user;
 
   if(usertype==='admin'){
     bookings = await Booking.find({houseOwner:id}).sort({ createdAt: -1 });

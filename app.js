@@ -18,20 +18,20 @@ require('dotenv').config()
 
 // connection
 const DB_NETWORK ='mongodb+srv://felixz:317111@cluster0.ujknwfv.mongodb.net/?retryWrites=true&w=majority'
-const DB_LOCAL = process.env.DB
+const DB_LOCAL = 'mongodb://0.0.0.0:27017/drental'
 
 mongoose.connect(DB_NETWORK, (err, res)=>{
     if(err){console.log(err)}
 
-    // console.log('connected');
-})
+    console.log('connected');     
+}) 
 
 //set static folder
 app.use(express.static('public'))
 app.use('/uploads', express.static('uploads')) 
 
-// middlewares 
-app.use(express.json()) 
+// middlewares     
+app.use(express.json())   
 app.use(cookiePaser())
 app.use(fileUpload())
 app.use(cors())
