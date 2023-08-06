@@ -17,6 +17,7 @@ const app = express()
 require('dotenv').config()
 
 // connection
+// const DB_NETWORK ='mongodb+srv://felixz:317111@cluster0.ujknwfv.mongodb.net/?retryWrites=true&w=majority'
 const DB_NETWORK ='mongodb+srv://felixz:317111@cluster0.ujknwfv.mongodb.net/?retryWrites=true&w=majority'
 const DB_LOCAL = 'mongodb://0.0.0.0:27017/drental'
 
@@ -25,11 +26,11 @@ mongoose.connect(DB_NETWORK, (err, res)=>{
 
     console.log('connected');     
 }) 
-
+// ccmmmcd
 //set static folder
 app.use(express.static('public'))
 app.use('/uploads', express.static('uploads')) 
-
+  
 // middlewares     
 app.use(express.json())   
 app.use(cookiePaser())
