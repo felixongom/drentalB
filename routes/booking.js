@@ -2,18 +2,20 @@ const express = require("express");
 const { validateToken, upload_files } = require("./validateUser");
 const Booking = require("../models/Booking");
 const House = require("../models/House");
+const User = require("../models/User");
+
+const {maileSender} = require('../mails/mails')
+
 const {
   houseSerilise,
   houseobj
 } = require("./__functions");
 const { findByIdAndUpdate } = require("../models/House");
-const User = require("../models/User");
 
 const router = express.Router();
 
 // booking the house
 router.post("/", validateToken, async (req, res) => {
-// return console.log(req.body)
   const { houseId, bookeePhone, price, houseOwner} = req.body;
   const { id, usertype } = req.user;
 
@@ -32,6 +34,25 @@ router.post("/", validateToken, async (req, res) => {
   });
   const __booking = await booking.save();
   res.send(__booking);
+
+  // looking into sending email
+  const user = await User.findById(id) 
+  const bookedHouse = await House.findById(houseId)
+  const bookedHouseowner = await User.findById(houseOwner)
+  
+
+  // return console.log(bookedHouseowner)
+  const sendToClient = user.email
+  const sendToHouseOwner = bookedHouseowner.email
+  const mailMessege = `You have booked a room at ${bookedHouse.name}, your booking has been confirmed`
+  const houseOwnerMesseg = `Hi, ${user.name}, Email: ${sendToClient} has just booked one room at ${bookedHouse.name}`
+
+  // sending email to client
+  maileSender(sendToClient, mailMessege, 'Thanks for your Booking')
+
+  // sending email to house owner
+  maileSender(sendToHouseOwner, sendToHouseOwner, houseOwnerMesseg)
+
 });
 
 // finging all the booking from the db
@@ -42,7 +63,7 @@ router.get("/", validateToken, async (req, res) => {
   const houses = await House.find();
   const customer = await User.find();
 
-  if(usertype==='admin'){
+  if(usertype==='admin'){ 
     bookings = await Booking.find({houseOwner:id}).sort({ createdAt: -1 });
   }else if(usertype==='super admin'){
     bookings = await Booking.find().sort({ createdAt: -1 });
@@ -92,6 +113,7 @@ router.get("/me", validateToken, async (req, res) => {
     result.push(returnHouse);
   }
   res.send(result);
+
 });
 
 module.exports = router;
