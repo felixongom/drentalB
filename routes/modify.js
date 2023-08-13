@@ -1,6 +1,8 @@
 const express = require("express");
 const { validateToken, upload_files } = require("./validateUser");
 const House = require("../models/House");
+const User = require("../models/User");
+
 const {
   houseSerilise,
   deleteImages,
@@ -8,23 +10,32 @@ const {
   priceFunction,
   addressFunction,
 } = require("./__functions");
+
+const {maileSender} = require('../mails/mails')
 const { findByIdAndUpdate } = require("../models/House");
 
 const router = express.Router();
 
 // approving the house 
 router.patch('/:id/:approved',validateToken, async (req, res)=>{
-    const {id, approved} = req.params
-    const {usertype} = req.user
-    const status = approved===true?false: true
-    console.log(status);
-    console.log(req.params);
+  const {id, approved} = req.params
+  const {usertype} = req.user
+  const status = approved==='true'?false: true
+  
 
    if(usertype !=='super admin') return res.send('unaouthorised action')
  try {
      const update = await House.findOneAndUpdate({_id:id},{$set:{approve:status}} )
-     res.send('approved')
+     res.send(`${status?'Approved':'Disapproved'}`)
     //  console.log(update);
+    // sending mail for approval
+    const findtheHouse = await House.findById(id)
+    const findthOwner = await User.findOne({_id:findtheHouse.user_id})
+    
+    const state = approved==='true'?'approved': 'removed'
+    const mailMessege = `Your house, ${findtheHouse.name} has been ${state}`
+
+    maileSender(findthOwner.email, mailMessege)
     
  } catch (error) {
     console.log(error);

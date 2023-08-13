@@ -1,6 +1,5 @@
 const mailer = require('nodemailer')
 
-
 const maileSender = (sendTo, mailMessege, mailSubject='A Mail from D\'rental')=>{
 
     const user = 'felixongom2018@gmail.com'

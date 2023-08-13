@@ -3,6 +3,8 @@ const { validateToken, upload_files } = require("./validateUser");
 const House = require("../models/House");
 const Payment =require('../models/Payment')
 const Price =require('../models/Price')
+const {maileSender} = require('../mails/mails') 
+const User = require('../models/User')
 
 
 const {
@@ -18,7 +20,7 @@ const router = express.Router();
 
 // add house
 router.post("/", validateToken, async (req, res) => {
-  const user = req.user; //to get the user details fro header
+  const user= req.user; //to get the user details fro header
   const { name, description, phone, services, type } = req.body;
 
   //  check for dupicate
@@ -79,6 +81,17 @@ router.post("/", validateToken, async (req, res) => {
   try {
     const saveHouse = await _house.save();
     res.send("created");
+
+    // send email to the admin
+    const adminuser = await User.findById(user.user_id)
+    const adminMessege = `${name} has been added please wait for admin to approve`
+    const suerMessege = `${adminuser.name} has just added a house: ${name}`
+    maileSender(adminuser.email, adminMessege)
+    
+    // send email to the super admin
+    maileSender('felixongom2018@gmail.com', suerMessege)
+
+
 
 
         // go ahead and give trial time in terms of Payment
